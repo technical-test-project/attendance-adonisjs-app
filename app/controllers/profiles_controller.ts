@@ -1,15 +1,16 @@
 import { inject } from '@adonisjs/core'
-import ProfileService from '#services/profile_service'
 import { HttpContext } from '@adonisjs/core/http'
+import UserService from '#services/user_service'
 
 @inject()
 export default class ProfilesController {
   constructor(
     protected ctx: HttpContext,
-    protected profileService: ProfileService
+    protected userService: UserService
   ) {}
+
   async handle(): Promise<void> {
-    const profile = await this.profileService.fetchProfile()
+    const profile = await this.userService.fetchUserProfile()
 
     return this.ctx.response.json({
       profile,
