@@ -8,8 +8,9 @@ export default class ProfilesController {
     protected ctx: HttpContext,
     protected profileService: ProfileService
   ) {}
-  async handle() {
+  async handle(): Promise<void> {
     const profile = await this.profileService.fetchProfile()
+
     return this.ctx.response.json({
       profile,
     })

@@ -8,6 +8,7 @@
 */
 
 import router from '@adonisjs/core/services/router'
+import { middleware } from '#start/kernel'
 const ProfilesController = () => import('#controllers/profiles_controller')
 
 router.get('/', async () => {
@@ -16,4 +17,8 @@ router.get('/', async () => {
   }
 })
 
-router.get('/profile', [ProfilesController])
+router.get('/profile', [ProfilesController]).use(
+  middleware.auth({
+    guards: ['api'],
+  })
+)
