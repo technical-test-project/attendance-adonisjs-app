@@ -9,9 +9,8 @@ export default class IsAdminMiddleware {
      */
     const currentUser = ctx.auth?.user!
     await currentUser.load('role')
-    const roleAdmin = await Role.findBy('name', 'admin')
 
-    if (currentUser.role.name !== roleAdmin?.name) {
+    if (currentUser.role.name !== Role.ADMIN) {
       return ctx.response.forbidden({
         errors: [
           {

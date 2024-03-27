@@ -14,7 +14,7 @@ export default class Attendance extends BaseModel {
     // When is admin not used QueryScope
     // When is employee filtered by user.roleId
     await user.load('role')
-    if (user.role.name !== 'admin') {
+    if (user.role.name !== Role.ADMIN) {
       query.whereHas('user', (builder) => {
         builder.where('role_id', user.roleId)
       })

@@ -5,6 +5,8 @@ import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 export default class Role extends BaseModel {
   static table: string = 'roles'
+  static ADMIN: string = 'admin'
+  static EMPLOYEE: string = 'employee'
 
   @column({ isPrimary: true })
   declare id: number

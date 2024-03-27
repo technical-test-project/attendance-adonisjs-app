@@ -4,8 +4,8 @@ import Role from '#models/role'
 import { ProfileFactory } from '#database/factories/profile_factory'
 import { randomUUID } from 'node:crypto'
 
-const roleAdmin = await Role.query().where('name', 'admin').first()
-const roleEmployee = await Role.query().where('name', 'employee').first()
+const roleAdmin = await Role.query().where('name', Role.ADMIN).first()
+const roleEmployee = await Role.query().where('name', Role.EMPLOYEE).first()
 
 export const UserFactory = factory
   .define(User, async ({ faker }) => {

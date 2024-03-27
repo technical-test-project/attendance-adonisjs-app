@@ -7,10 +7,10 @@ export default class extends BaseSeeder {
     // Write your database queries inside the run method
     const roleData = [
       {
-        name: 'admin',
+        name: Role.ADMIN,
       },
       {
-        name: 'employee',
+        name: Role.EMPLOYEE,
       },
     ]
 
