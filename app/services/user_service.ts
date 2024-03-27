@@ -23,12 +23,10 @@ export default class UserService {
      * Find a user by email. Return error if a user does
      * not exist
      */
-    const findByEmail = User.findBy('email', email)
-    if (!findByEmail) {
+    const user = await User.findBy('email', email)
+    if (!user) {
       return null
     }
-
-    const user = await findByEmail
 
     /**
      * Verify the password using the hash service
@@ -42,14 +40,16 @@ export default class UserService {
   async fetchUserProfile() {
     // const userAuth = this.ctx.auth?.user
 
-    const user = this.ctx?.auth?.user
+    const user = this.ctx?.auth?.user!
     await user?.load('profile')
     return user
   }
 
   async listOfUsers() {
-    const users: User[] = await User.query().preload('profile')
-    return users
+    const { page = 1, perPage } = this.ctx.request.qs()
+
+    const users = await User.query().preload('profile').paginate(page, perPage)
+    return users.serialize()
   }
 
   async storeUser() {

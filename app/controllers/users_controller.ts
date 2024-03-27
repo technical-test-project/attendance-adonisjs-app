@@ -12,7 +12,7 @@ export default class UsersController {
     const users = await _userService.listOfUsers()
     return ctx.response.ok({
       message: 'success',
-      data: users,
+      ...users,
     })
   }
 
