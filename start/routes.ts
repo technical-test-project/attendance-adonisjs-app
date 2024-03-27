@@ -38,7 +38,11 @@ router
         /**
          * API Users
          */
-        router.resource('users', UsersController).apiOnly()
+        router
+          .group(() => {
+            router.resource('users', UsersController).apiOnly()
+          })
+          .use(middleware.isAdmin())
 
         /**
          * API Attendances
