@@ -6,13 +6,13 @@ export default class extends BaseSeeder {
   async run() {
     // Write your database queries inside the run method
 
+    await UserFactory.apply('isAdmin').with('profile', 1).create()
+
     for (const position of await Position.all()) {
       await UserFactory.apply('isEmployee')
         .with('profile', 1)
         .merge({ positionId: position.id })
         .create()
     }
-
-    await UserFactory.apply('isAdmin').with('profile', 1).create()
   }
 }

@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+const UsersController = () => import('#controllers/users_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ProfilesController = () => import('#controllers/profiles_controller')
 
@@ -29,6 +30,8 @@ router
     router
       .group(() => {
         router.get('profile', [ProfilesController])
+
+        router.resource('users', UsersController).apiOnly()
       })
       .use(
         middleware.auth({

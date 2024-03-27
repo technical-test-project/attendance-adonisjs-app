@@ -13,6 +13,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 })
 
 export default class User extends compose(BaseModel, AuthFinder) {
+  static tableName: string = 'users'
   static accessTokens = DbAccessTokensProvider.forModel(User, {
     expiresIn: '30 days',
     prefix: 'oat_',
@@ -23,6 +24,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column({ isPrimary: true })
   declare id: number
+
+  @column({ serializeAs: null })
+  declare uuid: string
 
   @column()
   declare roleId: number

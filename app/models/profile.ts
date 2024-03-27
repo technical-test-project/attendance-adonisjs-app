@@ -11,10 +11,10 @@ export default class Profile extends BaseModel {
   declare userId: number
 
   @column()
-  declare name: string | null
+  declare name: string
 
   @column()
-  declare phone: string
+  declare phone: string | null
 
   @column()
   declare photoUrl: string | null
