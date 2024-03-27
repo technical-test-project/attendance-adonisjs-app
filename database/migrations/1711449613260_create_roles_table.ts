@@ -8,8 +8,8 @@ export default class extends BaseSchema {
       table.increments('id')
       table.string('name').unique()
 
-      table.timestamp('created_at').notNullable().defaultTo(this.now())
-      table.timestamp('updated_at').nullable().defaultTo(this.now())
+      table.timestamp('created_at')
+      table.timestamp('updated_at')
     })
   }
 
