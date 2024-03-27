@@ -9,11 +9,12 @@ export default class ProfilesController {
     protected userService: UserService
   ) {}
 
-  async handle(): Promise<void> {
+  async handle() {
     const profile = await this.userService.fetchUserProfile()
 
-    return this.ctx.response.json({
-      profile,
+    return this.ctx.response.ok({
+      message: 'success',
+      data: profile,
     })
   }
 }

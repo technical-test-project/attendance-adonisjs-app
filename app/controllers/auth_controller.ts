@@ -13,14 +13,14 @@ export default class AuthController {
     const accessToken = await this.userService.authenticated()
 
     if (!accessToken) {
-      return this.ctx.response.json({
+      return this.ctx.response.badRequest({
         message: 'Invalid Credentials',
       })
     }
 
-    return this.ctx.response.json({
+    return this.ctx.response.ok({
       message: 'Login successfully!',
-      accessToken,
+      data: accessToken,
     })
   }
 }
