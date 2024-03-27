@@ -12,7 +12,7 @@ export default class AttendancesController {
     const result = await _attendanceService.listOfAttendance()
     return ctx.response.ok({
       message: 'success',
-      ...result.toJSON(),
+      ...result,
     })
   }
 

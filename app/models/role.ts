@@ -1,7 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
+import User from '#models/user'
+import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 export default class Role extends BaseModel {
+  static table: string = 'roles'
+
   @column({ isPrimary: true })
   declare id: number
 
@@ -13,4 +17,7 @@ export default class Role extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @hasMany(() => User)
+  declare users: HasMany<typeof User>
 }

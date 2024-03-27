@@ -7,21 +7,24 @@ import { DateTime } from 'luxon'
 export default class AttendanceService {
   constructor(protected ctx: HttpContext) {}
   async listOfAttendance() {
-    const { userId, startDate, endDate, page = 1, perPage } = this.ctx.request.qs()
+    const { page = 1, perPage, startDate, endDate } = this.ctx.request.qs()
 
     const attendanceQuery = Attendance.query()
-    if (userId) {
-      attendanceQuery.where('user_id', userId)
-    }
+
+    // Filter by default auth role
+    const currentUser = this.ctx.auth?.user!
+    attendanceQuery.withScopes((scopes) => scopes.filterByCurrentUser(currentUser))
+
     if (startDate && endDate) {
       attendanceQuery.whereRaw('DATE(created_at) BETWEEN ? AND ?', [startDate, endDate])
     } else {
       attendanceQuery.whereRaw('MONTH(created_at) = ?', [DateTime.now().month])
     }
 
-    console.log(attendanceQuery.toSQL())
+    console.log(attendanceQuery.toQuery())
 
-    return attendanceQuery.paginate(page, perPage)
+    const paginate = await attendanceQuery.paginate(page, perPage)
+    return paginate.serialize()
   }
 
   async todayAttendance() {

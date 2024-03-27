@@ -67,7 +67,7 @@ export default class UserService {
       })
 
       // Store Photo
-      await payload.photo?.move(app.publicPath(User.tableName), {
+      await payload.photo?.move(app.publicPath(User.table), {
         name: `${user.uuid}.jpg`,
         overwrite: true,
       })
@@ -108,7 +108,7 @@ export default class UserService {
       await user.save()
 
       // Store Photo
-      await payload.photo?.move(app.publicPath(User.tableName), {
+      await payload.photo?.move(app.publicPath(User.table), {
         name: `${user.uuid}.jpg`,
         overwrite: true,
       })
