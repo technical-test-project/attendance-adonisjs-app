@@ -7,8 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.integer('user_id').notNullable().unsigned().references('users.id').onDelete('CASCADE')
-      table.dateTime('clock_in').notNullable()
-      table.dateTime('clock_out').nullable()
+      table.enum('status', ['clock_in', 'clock_out'])
+      table.dateTime('clock_at').notNullable()
 
       table.timestamp('created_at')
       table.timestamp('updated_at')

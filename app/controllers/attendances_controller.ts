@@ -56,7 +56,7 @@ export default class AttendancesController {
     return ctx.response.unprocessableEntity({
       errors: [
         {
-          message: 'Please Clock in first!',
+          message: result.message,
         },
       ],
     })

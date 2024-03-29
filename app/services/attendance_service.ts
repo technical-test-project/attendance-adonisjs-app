@@ -27,48 +27,74 @@ export default class AttendanceService {
     return paginate.serialize()
   }
 
-  async todayAttendance() {
+  private async todayAttendanceByStatus(status: string) {
     const currentUser = this.ctx?.auth?.user!
-    const attendance = await Attendance.query()
+
+    return await Attendance.query()
       .where('user_id', currentUser.id)
+      .where('status', status)
       .whereRaw('DATE(created_at) = ?', [DateTime.now().toSQLDate()])
       .first()
+  }
+
+  async todayAttendance() {
+    const attendanceClockIn = await this.todayAttendanceByStatus(Attendance.CLOCK_IN)
+    const attendanceClockOut = await this.todayAttendanceByStatus(Attendance.CLOCK_OUT)
+
     return {
-      isClockIn: attendance?.clockIn instanceof DateTime,
-      isClockOut: attendance?.clockOut instanceof DateTime,
-      attendance: attendance || null,
+      isClockIn:
+        attendanceClockIn?.clockAt instanceof DateTime &&
+        attendanceClockIn.status === Attendance.CLOCK_IN,
+      isClockOut:
+        attendanceClockOut?.clockAt instanceof DateTime &&
+        attendanceClockOut.status === Attendance.CLOCK_OUT,
     }
   }
 
   async clockIn() {
     const currentUser = this.ctx?.auth?.user!
 
-    // Check Today Attendance
+    // Check Today Attendance for 1 attempt ClockIn
     // if not exits or null, create the attendance
     const todayAttendance = await this.todayAttendance()
 
+    // If exits return to null
     if (todayAttendance?.isClockIn) {
       return null
     }
+    // Create attendance for ClockIn
     const attendance = await currentUser.related('attendances').create({
-      clockIn: DateTime.now(),
+      status: Attendance.CLOCK_IN,
     })
     attendance.load('user')
     return attendance
   }
 
   async clockOut() {
-    // Check Today Attendance
-    // if not exits or null, return null
+    const currentUser = this.ctx?.auth?.user!
     const todayAttendance = await this.todayAttendance()
-    if (todayAttendance?.isClockOut) {
-      return null
+
+    // If today has not ClockIn, then return null
+    if (!todayAttendance?.isClockIn) {
+      return {
+        message: 'Please Clock in first!',
+      }
     }
 
-    // Update latest attendance
-    const attendance = todayAttendance.attendance
-    attendance!.clockOut = DateTime.now()
+    // Check Today Attendance for 1 attempt ClockOut
+    // if not exits or null, return null
+    if (todayAttendance?.isClockOut) {
+      return {
+        message: 'Only 1 attempt for ClockOut today',
+      }
+    }
 
-    return (await attendance?.save()) || null
+    // Create attendance for ClockOut
+    const newAttendance = await currentUser.related('attendances').create({
+      status: Attendance.CLOCK_OUT,
+    })
+    newAttendance.load('user')
+
+    return newAttendance || null
   }
 }

@@ -6,6 +6,8 @@ import Role from '#models/role'
 
 export default class Attendance extends BaseModel {
   static table: string = 'attendances'
+  static CLOCK_IN = 'clock_in'
+  static CLOCK_OUT = 'clock_out'
 
   /**
    * Scopes
@@ -27,11 +29,11 @@ export default class Attendance extends BaseModel {
   @column()
   declare userId: number
 
-  @column.dateTime({ autoCreate: true })
-  declare clockIn: DateTime
+  @column()
+  declare status: string
 
-  @column.dateTime()
-  declare clockOut: DateTime | null
+  @column.dateTime({ autoCreate: true })
+  declare clockAt: DateTime
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
