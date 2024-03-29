@@ -3,6 +3,8 @@ import { UserFactory } from '#database/factories/user_factory'
 import Position from '#models/position'
 
 export default class extends BaseSeeder {
+  static environment = ['development', 'testing']
+
   async run() {
     // Write your database queries inside the run method
 
