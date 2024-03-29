@@ -7,9 +7,13 @@ import { DateTime } from 'luxon'
 export default class AttendanceService {
   constructor(protected ctx: HttpContext) {}
   async listOfAttendance() {
-    const { page = 1, perPage, startDate, endDate } = this.ctx.request.qs()
+    const { page = 1, perPage = 20, startDate, endDate } = this.ctx.request.qs()
 
     const attendanceQuery = Attendance.query()
+
+    attendanceQuery.preload('user', (userQuery) => {
+      userQuery.preload('profile')
+    })
 
     // Filter by default auth role
     const currentUser = this.ctx.auth?.user!
