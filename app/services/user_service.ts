@@ -46,10 +46,13 @@ export default class UserService {
   }
 
   async listOfUsers() {
-    const { page = 1, perPage } = this.ctx.request.qs()
-
-    const users = await User.query().preload('profile').paginate(page, perPage)
-    return users.serialize()
+    // const { page = 1, perPage = 100 } = this.ctx.request.qs()
+    //
+    // const users = await User.query().preload('profile').paginate(page, perPage)
+    // return users.serialize()
+    return {
+      data: await User.query().preload('profile'),
+    }
   }
 
   async storeUser() {

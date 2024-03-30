@@ -2,22 +2,26 @@ import { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import Attendance from '#models/attendance'
 import { DateTime } from 'luxon'
+import Role from "#models/role";
 
 @inject()
 export default class AttendanceService {
   constructor(protected ctx: HttpContext) {}
   async listOfAttendance() {
-    const { page = 1, perPage = 20, startDate, endDate } = this.ctx.request.qs()
+    // const { page = 1, perPage = 100, startDate, endDate } = this.ctx.request.qs()
+    const { startDate, endDate } = this.ctx.request.qs()
 
     const attendanceQuery = Attendance.query()
 
-    attendanceQuery.preload('user', (userQuery) => {
-      userQuery.preload('profile')
-    })
-
     // Filter by default auth role
     const currentUser = this.ctx.auth?.user!
-    attendanceQuery.withScopes((scopes) => scopes.filterByCurrentUser(currentUser))
+    await currentUser.preload('role')
+
+    if (currentUser.role.name !== Role.ADMIN) {
+      attendanceQuery.whereHas('user', (query) => {
+        query.where('id', currentUser.id)
+      })
+    }
 
     if (startDate && endDate) {
       attendanceQuery.whereRaw('DATE(created_at) BETWEEN ? AND ?', [startDate, endDate])
@@ -25,10 +29,20 @@ export default class AttendanceService {
       attendanceQuery.whereRaw('MONTH(created_at) = ?', [DateTime.now().month])
     }
 
-    console.log(attendanceQuery.toQuery())
+    // Preload relationships
+    attendanceQuery.preload('user', (userQuery) => {
+      userQuery.preload('profile')
+    })
 
-    const paginate = await attendanceQuery.paginate(page, perPage)
-    return paginate.serialize()
+    console.log(attendanceQuery.toQuery())
+    const attendances = await attendanceQuery.orderBy('created_at', 'desc')
+
+    // const paginate = await attendanceQuery.paginate(page, perPage)
+    // return paginate.serialize()
+
+    return {
+      data: attendances,
+    }
   }
 
   private async todayAttendanceByStatus(status: string) {
