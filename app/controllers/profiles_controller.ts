@@ -22,7 +22,7 @@ export default class ProfilesController {
     const profile = await this.userService.updateUser()
 
     return this.ctx.response.ok({
-      message: 'success',
+      message: 'User profile updated!',
       data: profile,
     })
   }

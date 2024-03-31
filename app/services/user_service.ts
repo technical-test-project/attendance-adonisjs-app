@@ -108,7 +108,7 @@ export default class UserService {
   async updateUser() {
     const payload = await this.ctx.request.validateUsing(updateUserValidator)
 
-    const userId = this.ctx.params.id ?? this.ctx?.auth?.user!.id
+    const userId = payload.userId ? payload.userId : this.ctx.params.id ?? this.ctx?.auth?.user!.id
     const user = await User.findOrFail(userId)
     await user.load('profile')
 

@@ -30,6 +30,7 @@ const createUserSchema = vine.object({
 })
 
 const updateUserSchema = vine.object({
+  userId: vine.number().optional(),
   roleId: vine.number().optional(),
   positionId: vine.number().nullable().optional(),
   email: vine
