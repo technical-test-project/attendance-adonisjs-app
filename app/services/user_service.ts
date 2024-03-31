@@ -123,7 +123,7 @@ export default class UserService {
 
       // Store Photo
       await payload.photo?.move(app.publicPath(User.table), {
-        name: `${user.uuid}.jpg`,
+        name: `${User.table}${user.uuid}.jpg`,
         overwrite: true,
       })
 
