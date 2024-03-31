@@ -2,7 +2,7 @@ import { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import Attendance from '#models/attendance'
 import { DateTime } from 'luxon'
-import Role from "#models/role";
+import Role from '#models/role'
 
 @inject()
 export default class AttendanceService {

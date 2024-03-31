@@ -33,7 +33,14 @@ export default class UserService {
      */
     const isVerified = await hash.verify(user!.password, password)
     if (isVerified) {
-      return await User.accessTokens.create(user!)
+      await user.load('role')
+      await user.load('profile')
+      await user.load('position')
+      const accessToken = await User.accessTokens.create(user!)
+      return {
+        user,
+        accessToken,
+      }
     }
   }
 
@@ -41,7 +48,9 @@ export default class UserService {
     // const userAuth = this.ctx.auth?.user
 
     const user = this.ctx?.auth?.user!
-    await user?.load('profile')
+    await user.load('role')
+    await user.load('profile')
+    await user.load('position')
     return user
   }
 
@@ -99,15 +108,17 @@ export default class UserService {
   async updateUser() {
     const payload = await this.ctx.request.validateUsing(updateUserValidator)
 
-    const user = await User.findOrFail(this.ctx.params.id)
+    const userId = this.ctx.params.id ?? this.ctx?.auth?.user!.id
+    const user = await User.findOrFail(userId)
+    await user.load('profile')
 
     const trx = await db.transaction()
     try {
       // Update a new user instance
-      user.roleId = payload.roleId || user.roleId
-      user.positionId = payload.positionId || user?.positionId
-      user.email = payload.email || user.email
-      user.password = payload.password || user.password
+      user.roleId = payload.roleId ?? user.roleId
+      user.positionId = payload.positionId ?? user?.positionId
+      user.email = payload.email ?? user.email
+      user.password = payload.password ?? user.password
       await user.save()
 
       // Store Photo
@@ -117,19 +128,24 @@ export default class UserService {
       })
 
       // Update a new profile instance
-      const profile = await Profile.find(user.id)
-      profile!.name = payload.name || user.profile.name
-      profile!.phone = payload.phone || user.profile?.phone
-      profile!.photoUrl = payload.photo?.fileName || user.profile?.photoUrl
+      const profile = await Profile.findOrFail(user.profile.id)
+      profile.name = payload.name ?? profile.name
+      profile.phone = payload.phone ?? profile.phone
+      profile.photoUrl = payload.photo?.fileName ?? profile.photoUrl
 
       await profile?.save()
 
       await trx.commit()
 
-      return user
+      const newUser = await User.find(userId)
+      await newUser?.load('role')
+      await newUser?.load('profile')
+      await newUser?.load('position')
+
+      return newUser
     } catch (error) {
       await trx.rollback()
-      console.error('Error creating user :', error.message)
+      console.error('Error creating user :', error)
       return error
     }
   }

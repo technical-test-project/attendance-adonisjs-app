@@ -8,6 +8,7 @@ import Profile from '#models/profile'
 import type { BelongsTo, HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import Attendance from '#models/attendance'
 import Role from '#models/role'
+import Position from '#models/position'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -50,6 +51,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @belongsTo(() => Role)
   declare role: BelongsTo<typeof Role>
+
+  @belongsTo(() => Position)
+  declare position: BelongsTo<typeof Position>
 
   @hasOne(() => Profile)
   declare profile: HasOne<typeof Profile>

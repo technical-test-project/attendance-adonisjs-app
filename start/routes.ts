@@ -33,7 +33,8 @@ router
         /**
          * API Profile
          */
-        router.get('profile', [ProfilesController])
+        router.get('profile', [ProfilesController, 'profile'])
+        router.post('profile/update', [ProfilesController, 'updateProfile'])
 
         /**
          * API Users
