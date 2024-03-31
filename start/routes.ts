@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+const ImagesController = () => import('#controllers/images_controller')
 const AttendancesController = () => import('#controllers/attendances_controller')
 const UsersController = () => import('#controllers/users_controller')
 const AuthController = () => import('#controllers/auth_controller')
@@ -20,8 +21,11 @@ router.get('/', async () => {
   }
 })
 
+router.get('images/:filename', [ImagesController])
+
 router
   .group(() => {
+
     // AuthController
     router.post('login', [AuthController])
 
