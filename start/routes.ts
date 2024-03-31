@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+const PositionsController = () => import('#controllers/positions_controller')
 const ImagesController = () => import('#controllers/images_controller')
 const AttendancesController = () => import('#controllers/attendances_controller')
 const UsersController = () => import('#controllers/users_controller')
@@ -25,7 +26,6 @@ router.get('images/:filename', [ImagesController])
 
 router
   .group(() => {
-
     // AuthController
     router.post('login', [AuthController])
 
@@ -35,10 +35,15 @@ router
     router
       .group(() => {
         /**
+         * API Positions
+         */
+        router.get('positions', [PositionsController])
+
+        /**
          * API Profile
          */
         router.get('profile', [ProfilesController, 'profile'])
-        router.post('profile/update', [ProfilesController, 'updateProfile'])
+        router.put('profile/:id/update', [ProfilesController, 'updateProfile'])
 
         /**
          * API Users

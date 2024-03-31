@@ -11,6 +11,7 @@ import app from '@adonisjs/core/services/app'
 import db from '@adonisjs/lucid/services/db'
 import Profile from '#models/profile'
 import { randomUUID } from 'node:crypto'
+import Role from '#models/role'
 
 @inject()
 export default class UserService {
@@ -59,8 +60,11 @@ export default class UserService {
     //
     // const users = await User.query().preload('profile').paginate(page, perPage)
     // return users.serialize()
+
+    const users = await User.query().preload('profile').preload('role').preload('position')
+
     return {
-      data: await User.query().preload('profile'),
+      data: users,
     }
   }
 
@@ -102,7 +106,12 @@ export default class UserService {
   }
 
   async showUser() {
-    return await User.query().preload('profile').where('id', this.ctx.params.id).first()
+    return await User.query()
+      .preload('profile')
+      .preload('position')
+      .preload('role')
+      .where('id', this.ctx.params.id)
+      .first()
   }
 
   async updateUser() {
